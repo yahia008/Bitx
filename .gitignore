@@ -1,2 +1,2 @@
-*./BitX.env .gitignore
-*./node_modules .gitignore
+.BitX
+./node_modules 
