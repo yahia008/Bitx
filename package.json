@@ -1,0 +1,24 @@
+{
+  "name": "bitx",
+  "version": "1.0.0",
+  "description": "Bitx trading platform",
+  "main": "app.js",
+  "scripts": {
+    "start": "SET JSON_env=production& nodemon app.js",
+    "end": "SET JSON_env=development& nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yahia008/Bitx.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yahia008/Bitx/issues"
+  },
+  "homepage": "https://github.com/yahia008/Bitx#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mogoose": "^0.0.1-security"
+  }
+}
