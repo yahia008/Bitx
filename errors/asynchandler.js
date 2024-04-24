@@ -6,4 +6,4 @@ const asynchandle = (func) => {
 
 
 
-module.exports =asynchandle
+module.exports =asynchandle 

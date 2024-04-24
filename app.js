@@ -14,7 +14,7 @@ const errorclass = require("./errors/errorclass");
 
 dotenv.config({path:'./BitX.env'})
 const app = express();
-app.use(express.json())
+app.use(express.json()) 
 
 
 

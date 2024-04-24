@@ -3,7 +3,7 @@ const errorclass = require("./errorclass");
 const dev = (error, res) => {
   res.status(error.status || 300).json({
     status: error.status,
-    error,
+    error, 
     stacktarce: error.stack,
   });
 };
