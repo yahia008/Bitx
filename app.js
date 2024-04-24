@@ -12,6 +12,7 @@ const dotenv = require('dotenv');
 
 dotenv.config({path:'./BitX.env'})
 const app = express();
+app.use(express.json())
 mongoose
   .connect(process.env.connect)
   .then((err) => console.log("good👍"))
