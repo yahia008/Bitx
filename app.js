@@ -8,11 +8,20 @@ process.on('uncaughtException', (error) => {
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require('dotenv');
+const errorhandlerfunc = require("./errors/errorhandlerfunc");
+const errorclass = require("./errors/errorclass");
 
 
 dotenv.config({path:'./BitX.env'})
 const app = express();
 app.use(express.json())
+
+
+
+app.all("*", (req,res,next) => {
+    return next (new errorclass('wrong route'))
+})
+app.use(errorhandlerfunc)
 mongoose
   .connect(process.env.connect)
   .then((err) => console.log("good👍"))
