@@ -20,10 +20,11 @@ const prod = (error, res) => {
       });
     } 
 }; 
-const code = () => {
-    const msg = `${error.name || error.email} already exits`
+const code = (error) => {
+  console.log(error)
+  const msg = `${error.keyValue.name || error.keyValue.email} already exits`;
   return new errorclass(msg, 404);
-}
+};
 const duplicate = (error) => {
   const greg=Object.values(error.errors).map(err=>err.message).join(',')
   const msg = `missing vaildations : ${greg}`;

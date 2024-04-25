@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const authschema = new mongoose.Schema({
   name: {
@@ -20,11 +21,12 @@ const authschema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "password is required"],
-    select: true,
+    select: false,
+    minlength:8
   },
   confirmPassword: {
     type: String,
-    required: [true, "name is required"],
+    required: [true, "confirmPassword is required"],
     validate: {
       validator: function (value) {
         return value === this.password;
@@ -41,13 +43,24 @@ const authschema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
-  forgotingpassword:String,
-  expireforgotingpassword:String
+  forgotingpassword: String,
+  expireforgotingpassword: String,
 });
 
+authschema.pre('save', async function (next) {
+  console.log(this.password)
+  if (!this.isModified('password')) {
+    next()
+  }
+  this.password = await bcrypt.hash(this.password, 12)
+  this.confirmPassword = undefined
+  console.log(this.password)
+  next()
+})
 
-
-
+authschema.methods.comperepassword = async function (password,dbpassword) {
+  return await bcrypt.compare(password,dbpassword)
+}
 const auth = mongoose.model('Auth', authschema)
 
 
