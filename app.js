@@ -10,18 +10,19 @@ const mongoose = require("mongoose");
 const dotenv = require('dotenv');
 const errorhandlerfunc = require("./errors/errorhandlerfunc");
 const errorclass = require("./errors/errorclass");
+const authroute = require("./routers/authroute");
 
 
 dotenv.config({path:'./BitX.env'})
 const app = express();
 app.use(express.json()) 
-
+app.use('/auth',authroute)
 
 
 app.all("*", (req,res,next) => {
     return next (new errorclass('wrong route'))
 })
-app.use(errorhandlerfunc)
+app.use(errorhandlerfunc) 
 mongoose
   .connect(process.env.connect)
   .then((err) => console.log("good👍"))
