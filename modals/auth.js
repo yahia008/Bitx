@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 const authschema = new mongoose.Schema({
   name: {
@@ -22,7 +23,7 @@ const authschema = new mongoose.Schema({
     type: String,
     required: [true, "password is required"],
     select: false,
-    minlength:8
+    minlength: 8,
   },
   confirmPassword: {
     type: String,
@@ -47,21 +48,31 @@ const authschema = new mongoose.Schema({
   expireforgotingpassword: String,
 });
 
-authschema.pre('save', async function (next) {
-  console.log(this.password)
-  if (!this.isModified('password')) {
-    next()
+authschema.pre("save", async function (next) {
+  //console.log(this.password)
+  if (!this.isModified("password")) {
+    next();
   }
-  this.password = await bcrypt.hash(this.password, 12)
-  this.confirmPassword = undefined
-  console.log(this.password)
-  next()
-})
+  this.password = await bcrypt.hash(this.password, 12);
+  this.confirmPassword = undefined;
+  console.log(this.password);
+  next();
+});
 
-authschema.methods.comperepassword = async function (password,dbpassword) {
-  return await bcrypt.compare(password,dbpassword)
-}
-const auth = mongoose.model('Auth', authschema)
+authschema.methods.comperepassword = async function (password, dbpassword) {
+  return await bcrypt.compare(password, dbpassword);
+};
+authschema.methods.forpassword = async function () {
+  const reset = await crypto.randomBytes(32).toString("hex");
+  this.forgotingpassword = await crypto
+  .createHash("sha256")
+  .update(reset)
+  .digest("hex");  
+  this.expireforgotingpassword = Date.now() + 600000; 
+  
+  return reset;
+};
 
+const auth = mongoose.model("Auth", authschema);
 
-module.exports=auth
+module.exports = auth;
