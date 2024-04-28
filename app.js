@@ -7,6 +7,7 @@ process.on('uncaughtException', (error) => {
 
 const express = require("express");
 const mongoose = require("mongoose");
+const cp = require("cookie-parser");
 const dotenv = require('dotenv');
 const errorhandlerfunc = require("./errors/errorhandlerfunc");
 const errorclass = require("./errors/errorclass");
@@ -16,6 +17,7 @@ const authroute = require("./routers/authroute");
 dotenv.config({path:'./BitX.env'})
 const app = express();
 app.use(express.json()) 
+app.use(cp()) 
 app.use('/auth',authroute)
 
 
@@ -35,6 +37,4 @@ process.on("unhandledRejection", (error) => {
   applis.close(() => {
     process.exit(1);
   });
-});
-console.log(Date.now())
-console.log(Date.now()+10+60+1000); 
+}); 

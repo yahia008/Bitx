@@ -21,8 +21,12 @@ const prod = (error, res) => {
     } 
 }; 
 const code = (error) => {
-  console.log(error)
+  
   const msg = `${error.keyValue.name || error.keyValue.email} already exits`;
+  return new errorclass(msg, 404);
+};
+const cast = (error) => {
+   const msg = `no user with the id found`;
   return new errorclass(msg, 404);
 };
 const duplicate = (error) => {
@@ -37,6 +41,7 @@ module.exports = (error, req, res, next) => {
   }
 
     if (process.env.JSON_env === "production") {
+      if (error.name === "CastError") error = cast(error);
       if (error.code===11000) error=code(error)
       if (error.name === "ValidationError") error = duplicate(error);
     prod(error, res);

@@ -46,6 +46,7 @@ const authschema = new mongoose.Schema({
   },
   forgotingpassword: String,
   expireforgotingpassword: String,
+  passwordchangeAt: Date,
 });
 
 authschema.pre("save", async function (next) {
@@ -65,12 +66,19 @@ authschema.methods.comperepassword = async function (password, dbpassword) {
 authschema.methods.forpassword = async function () {
   const reset = await crypto.randomBytes(32).toString("hex");
   this.forgotingpassword = await crypto
-  .createHash("sha256")
-  .update(reset)
-  .digest("hex");  
-  this.expireforgotingpassword = Date.now() + 600000; 
-  
+    .createHash("sha256")
+    .update(reset)
+    .digest("hex");
+  this.expireforgotingpassword = Date.now() + 600000;
+
   return reset;
+};
+authschema.methods.mifi = function (iat) {
+  if (this.password) {
+    const change = parseInt(this.passwordchangeAt / 1000, 10);
+    return iat < change;
+  }
+  return false;
 };
 
 const auth = mongoose.model("Auth", authschema);

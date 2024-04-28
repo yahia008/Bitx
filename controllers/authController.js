@@ -4,6 +4,7 @@ const errorclass = require("../errors/errorclass");
 const auth = require("../modals/auth");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const util = require("util");
 
 const jwttoken = (_id) => {
   return jwt.sign({ _id }, process.env.connect, {
@@ -12,7 +13,16 @@ const jwttoken = (_id) => {
 };
 
 const duplicate = (res, status, user) => {
+  
   const token = jwttoken(user._id);
+  let obj = {
+    maxAge: 600000,
+    httpOnly: true,
+  };
+  if (process.env.JSON_env === "production") {
+  obj.secure=true
+  }
+   res.cookie("token", token,obj);
   return res.status(status).json({
     success: "success",
     token,
@@ -21,9 +31,52 @@ const duplicate = (res, status, user) => {
 };
 
 exports.signup = asynchandle(async (req, res, next) => {
-  const createNewUser = await auth.create(req.body);
+  const createNewUser = await auth.create(req.body); 
 
   duplicate(res, 201, createNewUser);
+});
+exports.getalluser = asynchandle(async (req, res, next) => {
+  // req.query.sort = "-userCreatedAt";
+  let users = auth.find();
+  //const sort = req.query.sort.split(",").join(" ");
+  users = users.sort("-userCreatedAt");
+  const Allusers = await users;
+  res.json({
+    Numberofusers: Allusers.length,
+    Allusers,
+  });
+});
+exports.getalluserbyid = asynchandle(async (req, res, next) => {
+  // req.query.sort = "-userCreatedAt";
+  let users = auth.findById(req.params.id);
+  //const sort = req.query.sort.split(",").join(" ");
+  const user = await users;
+  res.json({
+    user,
+  });
+});
+exports.changepassword = asynchandle(async (req, res, next) => {
+  const user = await auth.findOne({ _id: req.user._id }).select("+password");
+
+  if (!user) {
+    return next(new errorclass("u have to b log in to change password", 210));
+  }
+  if (!req.body.currentPassword) {
+    return next(new errorclass("enter current password", 210));
+  }
+  if (!(await user.comperepassword(req.body.currentPassword, user.password))) {
+    return next(new errorclass("wrong password", 210));
+  }
+  if (!req.body.newpassword || !req.body.confirmNewPassword) {
+    return next(new errorclass("newpassword and confirmNewPassword", 210));
+  }
+  user.password = req.body.newpassword;
+  user.confirmPassword = req.body.confirmNewPassword;
+  user.passwordchangeAt = Date.now();
+  await user.save();
+  res.json({
+    success: "success",
+  });
 });
 
 exports.login = asynchandle(async (req, res, next) => {
@@ -56,7 +109,7 @@ exports.forgotingpassword = asynchandle(async (req, res, next) => {
   await finduser.save({ validateBeforeSave: false });
   let message = `click here to reset  your password \n \n
 ${req.protocol}://${req.get("host")}/auth/resetpassword/${token} `;
-  console.log(message);
+
   try {
     await sendmails({
       email: finduser.email,
@@ -77,12 +130,12 @@ ${req.protocol}://${req.get("host")}/auth/resetpassword/${token} `;
 });
 
 exports.resetpassword = asynchandle(async (req, res, next) => {
-  const hash =await crypto
+  const hash = await crypto
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
   const create = await auth.findOne({
-   // forgotingpassword: hash,
+    // forgotingpassword: hash,
     expireforgotingpassword: { $gt: Date.now() },
   });
   console.log(hash);
@@ -93,7 +146,37 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
   create.expireforgotingpassword = undefined;
   create.password = req.body.password;
   create.confirmPassword = req.body.confirmPassword;
+  create.passwordchangeAt = Date.now();
   await create.save({ validateBeforeSave: false });
-  duplicate(res, 201, create); 
-   
+  duplicate(res, 201, create);
 });
+exports.authorize = asynchandle(async (req, res, next) => {
+  const authorize =
+    req.cookies.token ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJkNDg2YzAxNTVlOWE4NzQ0ZTE4Y2IiLCJpYXQiOjE3MTQyNDM2OTYsImV4cCI6MTcxNDUwMjg5Nn0.dmziiFBV3_MWuhhJdJar3PR6kMpAfKNroHz2jrF8UTw";
+  if (!authorize) {
+    return next(new errorclass("please log in"));
+  }
+  const verify = await util.promisify(jwt.verify)(
+    authorize,
+    process.env.connect
+  );
+  const user = await auth.findById(verify._id);
+  if (!user) {
+    return next(new errorclass("log in again"));
+  }
+  if (await user.mifi(verify.iat)) {
+    return next(new errorclass(" please log in again", 300));
+  }
+  req.user = user;
+  next();
+});
+
+exports.role = (role) => {
+  return (req, res, next) => {
+    if (!req.user.role === role) {
+      return next(new errorclass("you are not allowed"));
+    }
+    next();
+  };
+};
