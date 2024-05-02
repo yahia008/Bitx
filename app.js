@@ -12,13 +12,14 @@ const dotenv = require('dotenv');
 const errorhandlerfunc = require("./errors/errorhandlerfunc");
 const errorclass = require("./errors/errorclass");
 const authroute = require("./routers/authroute");
-
+const tx_route = require("./routers/tx_route")
 
 dotenv.config({path:'./BitX.env'})
 const app = express();
 app.use(express.json()) 
 app.use(cp()) 
 app.use('/auth',authroute)
+app.use('/transaction', tx_route)
 
 
 app.all("*", (req,res,next) => {
