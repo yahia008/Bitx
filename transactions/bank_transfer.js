@@ -1,5 +1,6 @@
 const Flutterwave = require('flutterwave-node-v3');
 const generateTxRef = require('./utils');
+const auth = require('../modals/auth');
 
 const flw = new Flutterwave('FLWPUBK_TEST-5907fd36a224f71106cda5667a587223-X', 'FLWSECK_TEST-ef622e80fd8b4d3b5faa236d56294a77-X');
 
@@ -21,9 +22,14 @@ const bank_trf = async (req, res) => {
 
       }
 
-      data = await flw.Charge.bank_transfer(payload);  //making the api request 
-
-
+   let data = await flw.Charge.bank_transfer(payload);  //making the api request 
+     if (data) {
+         const bal = await auth.findOne({ email: payload.email })
+         bal.balance = bal.balance + payload.amount 
+         bal.save({validateBeforeSave:false})
+         
+}
+        
       res.status(200).json(data)
       
 
@@ -58,7 +64,12 @@ const ussd_trf = async (req, res) => {
          }
 
          const data = await flw.Charge.ussd(payload)
-         res.status(200).json(data)
+         if (data) {
+           const bal = await auth.findOne({ email: payload.email });
+           bal.balance = bal.balance + payload.amount;
+           bal.save({ validateBeforeSave: false });
+         } 
+        res.status(200).json(data)
 
         }catch(error){
             if (error.name === 'validationError') {

@@ -152,8 +152,7 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
 });
 exports.authorize = asynchandle(async (req, res, next) => {
   const authorize =
-    req.cookies.token ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJkNDg2YzAxNTVlOWE4NzQ0ZTE4Y2IiLCJpYXQiOjE3MTQyNDM2OTYsImV4cCI6MTcxNDUwMjg5Nn0.dmziiFBV3_MWuhhJdJar3PR6kMpAfKNroHz2jrF8UTw";
+    req.cookies.token
   if (!authorize) {
     return next(new errorclass("please log in"));
   }

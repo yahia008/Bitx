@@ -34,6 +34,10 @@ const duplicate = (error) => {
   const msg = `missing vaildations : ${greg}`;
   return new errorclass(msg, 404)
 };
+const TokenExpiredError = (error) => {
+  const msg = `${error.message} please log in again`;
+  return new errorclass(msg, 404)
+};
 
 module.exports = (error, req, res, next) => {
   if (process.env.JSON_env === "development") {
@@ -43,6 +47,7 @@ module.exports = (error, req, res, next) => {
     if (process.env.JSON_env === "production") {
       if (error.name === "CastError") error = cast(error);
       if (error.code===11000) error=code(error)
+      if (error.name === "TokenExpiredError") error = TokenExpiredError(error);
       if (error.name === "ValidationError") error = duplicate(error);
     prod(error, res);
   }
