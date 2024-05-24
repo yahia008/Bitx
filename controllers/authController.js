@@ -152,16 +152,16 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
 });
 exports.authorize = asynchandle(async (req, res, next) => {
   const authorize = req.cookies.token;
-  const head = req.headers.authorization;
+  let head;
   const Authorization = req.headers.authorization;
-let tok = authorize;
+
   if (Authorization && Authorization.startsWith("Bearer")) {
-    tok = Authorization.split(" ")[1];
+    head = Authorization.split(" ")[1];
   }
-  if (!tok) {
+  if (!authorize&&!head) {
     return next(new errorclass("please log in"));
   }
-  const verify = await util.promisify(jwt.verify)(tok, process.env.connect);
+  const verify = await util.promisify(jwt.verify)(authorize||head, process.env.connect);
   const user = await auth.findById(verify._id);
   if (!user) {
     return next(new errorclass("log in again"));
@@ -175,9 +175,9 @@ let tok = authorize;
 
 exports.role = (role) => {
   return (req, res, next) => {
-    if (!req.user.role === role) {
-      return next(new errorclass("you are not allowed"));
+    if (req.user.role === role) {
+      next();
     }
-    next();
+    return next(new errorclass("you are not allowed"));
   };
 };
