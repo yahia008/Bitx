@@ -153,9 +153,8 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
 exports.authorize = asynchandle(async (req, res, next) => {
   const authorize = req.cookies.token;
   const head = req.headers.authorization;
-
   const Authorization = req.headers.authorization;
-
+let tok = authorize;
   if (Authorization && Authorization.startsWith("Bearer")) {
     tok = Authorization.split(" ")[1];
   }
