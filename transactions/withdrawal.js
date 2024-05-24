@@ -1,5 +1,6 @@
 const Authmodel = require('../modals/auth')
 const tx_model = require('../modals/trxmodel')
+const {charge} = require('./utils');
 
 
 
@@ -7,6 +8,7 @@ const tx_model = require('../modals/trxmodel')
 const withdrawal = async(req, res) => {
   
     const {email, amount, bank_name, account_number} = req.body
+    charge = charge(amount)
 
     try{
         const user = await Authmodel.findOne({email})
@@ -18,7 +20,7 @@ const withdrawal = async(req, res) => {
         if (amount > user.balance){
             return res.status(400).json({message:'insufficient funds'})
         }
-        user.balance -= amount
+        user.balance -= amount + charge
 
         await user.save();
       user_tx = new  tx_model({email, amount, bank_name, account_name, type: 'withdrawal'})
@@ -32,4 +34,7 @@ const withdrawal = async(req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
     }
 
+}
+module.exports = {
+    withdrawal
 }

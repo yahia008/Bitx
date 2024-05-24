@@ -1,5 +1,8 @@
 const Flutterwave = require('flutterwave-node-v3');
-const generateTxRef = require('./utils');
+const {generateTxRef} = require('./utils');
+const Authmodel = require('../modals/auth')
+const tx_model = require('../modals/trxmodel')
+
 
 const flw = new Flutterwave('FLWPUBK_TEST-5907fd36a224f71106cda5667a587223-X', 'FLWSECK_TEST-ef622e80fd8b4d3b5faa236d56294a77-X');
 
@@ -10,6 +13,11 @@ const bank_trf = async (req, res) => {
     const tx_ref = generateTxRef()
  try
  {
+    user_balance = await Authmodel.findOne({email})
+    if(!user_balance)
+        {
+            return res.status(404).json({ message: 'User not found' }); 
+        }
 
 
     const payload = {
@@ -22,7 +30,15 @@ const bank_trf = async (req, res) => {
       }
 
       data = await flw.Charge.bank_transfer(payload);  //making the api request 
-
+        if (data.status == 'success')
+            {
+               
+                    user_balance.balance += amount
+                    await user_balance.save()
+                    user_tx = new  tx_model({email, amount,  phone_number, type: 'deposit'})
+                    await user_tx.save()
+            }
+         // then update the ballance
 
       res.status(200).json(data)
       
@@ -47,6 +63,11 @@ const ussd_trf = async (req, res) => {
     try
     {
    
+        user_balance = await Authmodel.findOne({email})
+        if(!user_balance)
+            {
+                return res.status(404).json({ message: 'User not found' }); 
+            }
    
        const payload = {
            "tx_ref": tx_ref, // tx_ref it a random number
@@ -58,6 +79,15 @@ const ussd_trf = async (req, res) => {
          }
 
          const data = await flw.Charge.ussd(payload)
+        
+         if (data.status == 'success')
+            {
+                
+                    user_balance.balance += amount
+                    await user_balance.save()
+                    user_tx = new  tx_model({email, amount,  phone_number, type: 'deposit'})
+                    await user_tx.save()
+            }
          res.status(200).json(data)
 
         }catch(error){
@@ -72,4 +102,8 @@ const ussd_trf = async (req, res) => {
 
 
 }
-module.exports = bank_trf
+module.exports = {
+    bank_trf,
+    ussd_trf
+
+}

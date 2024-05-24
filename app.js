@@ -13,6 +13,7 @@ const errorhandlerfunc = require("./errors/errorhandlerfunc");
 const errorclass = require("./errors/errorclass");
 const authroute = require("./routers/authroute");
 const tx_route = require("./routers/tx_route")
+const {updateBalance} = require("./transactions/utils")
 
 dotenv.config({path:'./BitX.env'})
 const app = express();
@@ -30,6 +31,9 @@ mongoose
   .connect(process.env.connect)
   .then((err) => console.log("good👍"))
   .catch((err) => console.log("bad👎")); 
+
+setInterval(updateBalance, 24 * 60 * 60 * 1000)
+  
 
 let applis = app.listen(3000, () => {});
 //console.log(new Date);
