@@ -50,13 +50,13 @@ const authschema = new mongoose.Schema({
 });
 
 authschema.pre("save", async function (next) {
-  //console.log(this.password)
+  
   if (!this.isModified("password")) {
     next();
   }
   this.password = await bcrypt.hash(this.password, 12);
   this.confirmPassword = undefined;
-  console.log(this.password);
+  
   next();
 });
 
