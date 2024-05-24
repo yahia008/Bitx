@@ -5,6 +5,7 @@ const auth = require("../modals/auth");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const util = require("util");
+const { log } = require("console");
 
 const jwttoken = (_id) => {
   return jwt.sign({ _id }, process.env.connect, {
@@ -13,16 +14,15 @@ const jwttoken = (_id) => {
 };
 
 const duplicate = (res, status, user) => {
-  
   const token = jwttoken(user._id);
   let obj = {
     maxAge: 600000,
     httpOnly: true,
   };
   if (process.env.JSON_env === "production") {
-  obj.secure=true
+    obj.secure = true;
   }
-   res.cookie("token", token,obj);
+  res.cookie("token", token, obj);
   return res.status(status).json({
     success: "success",
     token,
@@ -31,7 +31,7 @@ const duplicate = (res, status, user) => {
 };
 
 exports.signup = asynchandle(async (req, res, next) => {
-  const createNewUser = await auth.create(req.body); 
+  const createNewUser = await auth.create(req.body);
 
   duplicate(res, 201, createNewUser);
 });
@@ -151,16 +151,18 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
   duplicate(res, 201, create);
 });
 exports.authorize = asynchandle(async (req, res, next) => {
-  const authorize =
-    req.cookies.token ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJkNDg2YzAxNTVlOWE4NzQ0ZTE4Y2IiLCJpYXQiOjE3MTQyNDM2OTYsImV4cCI6MTcxNDUwMjg5Nn0.dmziiFBV3_MWuhhJdJar3PR6kMpAfKNroHz2jrF8UTw";
-  if (!authorize) {
+  const authorize = req.cookies.token;
+  const head = req.headers.authorization;
+
+  const Authorization = req.headers.authorization;
+
+  if (Authorization && Authorization.startsWith("Bearer")) {
+    tok = Authorization.split(" ")[1];
+  }
+  if (!tok) {
     return next(new errorclass("please log in"));
   }
-  const verify = await util.promisify(jwt.verify)(
-    authorize,
-    process.env.connect
-  );
+  const verify = await util.promisify(jwt.verify)(tok, process.env.connect);
   const user = await auth.findById(verify._id);
   if (!user) {
     return next(new errorclass("log in again"));

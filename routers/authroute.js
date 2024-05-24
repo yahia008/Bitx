@@ -5,7 +5,7 @@ const { signup, login, forgotingpassword, resetpassword, authorize, changepasswo
 
 const authroute = express.Router()
 authroute.route('/signup').post(signup)
-authroute.route("/login").post(authorize,login);
+authroute.route("/login").post(login);
 authroute.route("/forgotingpassword").post(forgotingpassword);
 authroute.route("/resetpassword/:token").patch(resetpassword);
 authroute.route("/changepassword").patch(authorize,changepassword);
