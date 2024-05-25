@@ -22,9 +22,9 @@ const withdrawal = async(req, res) => {
         }
         user.balance -= amount + charge
 
-        await user.save();
+        await user.save({ validateBeforeSave: false });
       user_tx = new  tx_model({email, amount, bank_name, account_name, type: 'withdrawal'})
-      await usert_tx.save()
+      await usert_tx.save({ validateBeforeSave: false });
 
 
     return res.status(200).json({ message: 'Withdrawal successful' });
