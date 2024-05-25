@@ -13,7 +13,7 @@ const bank_trf = async (req, res) => {
     const tx_ref = generateTxRef()
  try
  {
-    user_balance = await Authmodel.findOne({email})
+   const  user_balance = await Authmodel.findOne({email})
     if(!user_balance)
         {
             return res.status(404).json({ message: 'User not found' }); 

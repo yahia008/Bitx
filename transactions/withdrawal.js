@@ -20,7 +20,7 @@ const withdrawal = async(req, res) => {
         if (amount > user.balance){
             return res.status(400).json({message:'insufficient funds'})
         }
-        user.balance -= amount + charge
+        user.balance -= amount * 0.024
 
         await user.save();
       user_tx = new  tx_model({email, amount, bank_name, account_name, type: 'withdrawal'})
@@ -35,6 +35,7 @@ const withdrawal = async(req, res) => {
     }
 
 }
+
 module.exports = {
     withdrawal
 }
