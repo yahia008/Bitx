@@ -9,7 +9,7 @@ authroute.route("/login").post(login);
 authroute.route("/forgotingpassword").post(forgotingpassword);
 authroute.route("/resetpassword/:token").patch(resetpassword);
 authroute.route("/changepassword").patch(authorize,changepassword);
-authroute.route("/getalluser").get(authorize,role('admin'),getalluser);
+authroute.route("/getall").get(authorize,role('admin'),getalluser);
 authroute.route("/getalluser/:id").get(authorize,role('admin'),getalluserbyid);
 
 

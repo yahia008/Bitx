@@ -9,7 +9,8 @@ const transactionSchema = new Schema({
   type:{type:String, enum : ['deposit', 'withdrawal']},
   bank_name:{type:String},
   account_number:{type:String},
-  phone_number:{type:String}
+  phone_number:{type:String},
+  
   
   
 });

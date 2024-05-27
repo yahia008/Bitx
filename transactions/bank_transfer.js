@@ -1,20 +1,19 @@
-const Flutterwave = require("flutterwave-node-v3");
-const { generateTxRef } = require("./utils");
-const Authmodel = require("../modals/auth");
-const tx_model = require("../modals/trxmodel");
+const Flutterwave = require('flutterwave-node-v3');
+const {generateTxRef} = require('./utils');
+const Authmodel = require('../modals/auth')
+const tx_model = require('../modals/trxmodel')
 
-const flw = new Flutterwave(
-  "FLWPUBK_TEST-5907fd36a224f71106cda5667a587223-X",
-  "FLWSECK_TEST-ef622e80fd8b4d3b5faa236d56294a77-X"
-);
+
+const flw = new Flutterwave('FLWPUBK_TEST-5907fd36a224f71106cda5667a587223-X', 'FLWSECK_TEST-ef622e80fd8b4d3b5faa236d56294a77-X');
+
+
 
 const bank_trf = async (req, res) => {
-
     const {email, amount, phone_number} = req.body
     const tx_ref = generateTxRef()
  try
  {
-   const  user_balance = await Authmodel.findOne({email})
+    const user_balance = await Authmodel.findOne({email})
     if(!user_balance)
         {
             return res.status(404).json({ message: 'User not found' }); 
@@ -30,14 +29,14 @@ const bank_trf = async (req, res) => {
 
       }
 
-      data = await flw.Charge.bank_transfer(payload);  //making the api request 
+ const data = await flw.Charge.bank_transfer(payload);  //making the api request 
         if (data.status == 'success')
             {
                
                     user_balance.balance += amount
-                    await user_balance.save({validateBeforSave:false})
+                    await user_balance.save({validateBeforeSave:false})
                     user_tx = new  tx_model({email, amount,  phone_number, type: 'deposit'})
-                    await user_tx.save()
+                    await user_tx.save({validateBeforeSave: false})
             }
          // then update the ballance
 
@@ -53,8 +52,9 @@ const bank_trf = async (req, res) => {
             res.status(500).json({ error: 'Internal Server Error' });
         }
 
-};
+     
 }
+};
 
 const ussd_trf = async (req, res) => {
   const { email, amount, phone_number } = req.body;

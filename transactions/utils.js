@@ -14,25 +14,44 @@ const charges = (amount) => {
 const updateBalance = async () => {
     try{
       const users = await Authmodel.find()
-      for (user of users )
+      for (const user of users )
         {
-            if (user.balance < 5000)
-                return;
-        }
-      const  update_balance = 0.03 * user.balance
+            if (user.balance < 5000){
+                continue;
+            }
+                
 
-        user.balance += update_balance
-        await user.save()
-        console.log('User balances updated successfully.')
+            const  update_balance = 0.03 * user.balance
+
+            user.balance += update_balance
+            await user.save()
+            console.log('User balances updated successfully.')
+        }
+     
+        
 
     }catch(error){
         console.error('Error updating user balances:', error);
     }
 }
+
+const checkWithdraw = async (email) => {
+    const user = await Authmodel.findOne({email})
+    const lastTrx = user.date
+    const now = Date.now()
+
+    if(!lastTrx){
+
+        return true
+    }
+    const oneday = 24 * 60 * 60 * 1000
+    return (now - lastTrx) >= oneday 
+}
    
  module.exports ={
     generateTxRef,
     charges,
-    updateBalance
+    updateBalance,
+    checkWithdraw,
 
  }
