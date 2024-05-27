@@ -21,14 +21,16 @@ const updateBalance = async () => {
             }
                 
 
+
             const  update_balance = 0.03 * user.balance
 
             user.balance += update_balance
             await user.save()
-            console.log('User balances updated successfully.')
+            
         }
      
         
+        console.log('User balances updated successfully.')
 
     }catch(error){
         console.error('Error updating user balances:', error);

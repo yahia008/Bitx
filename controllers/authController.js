@@ -91,7 +91,7 @@ exports.login = asynchandle(async (req, res, next) => {
     return next(new errorclass("no user with this email found", 400));
   }
   if (!(await finduser.comperepassword(password, finduser.password))) {
-    return next(new errorclass("no user with this email found", 400));
+    return next(new errorclass("wrong password ", 400));
   }
   duplicate(res, 201, finduser);
 });
@@ -153,15 +153,19 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
 exports.authorize = asynchandle(async (req, res, next) => {
   const authorize = req.cookies.token;
   let head;
-  const Authorization = req.headers.authorization;
+  let Authorization = req.headers.authorization;
 
   if (Authorization && Authorization.startsWith("Bearer")) {
     head = Authorization.split(" ")[1];
   }
-  if (!authorize&&!head) {
+
+  if (!authorize && !head) {
     return next(new errorclass("please log in"));
   }
-  const verify = await util.promisify(jwt.verify)(authorize||head, process.env.connect);
+  const verify = await util.promisify(jwt.verify)(
+    authorize || head,
+    process.env.connect
+  );
   const user = await auth.findById(verify._id);
   if (!user) {
     return next(new errorclass("log in again"));
@@ -172,12 +176,22 @@ exports.authorize = asynchandle(async (req, res, next) => {
   req.user = user;
   next();
 });
+exports.getuserbyemail = asynchandle(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await auth.findOne({ email });
+  if (!user) {
+    return next(new errorclass("no user found", 404));
+  }
+  res.json({
+    user,
+  });
+});
 
 exports.role = (role) => {
   return (req, res, next) => {
-    if (req.user.role === role) {
-      next();
+    if (!req.user.role === "admin") {
+      return next(new errorclass("you are not allowed"));
     }
-    return next(new errorclass("you are not allowed"));
+    next();
   };
 };
