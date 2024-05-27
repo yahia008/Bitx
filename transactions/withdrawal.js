@@ -1,6 +1,6 @@
 const Authmodel = require('../modals/auth')
 const tx_model = require('../modals/trxmodel')
-
+const {checkWithdraw} = require('./utils')
 
 
 
@@ -29,7 +29,7 @@ const withdrawal = async(req, res) => {
             {
                 return res.status(400).json({message:'you have reach your withdraw limit'})
             }
-         if(checkWithdraw){
+         if(checkWithdraw(user.email)){
                 user.balance -= amount * 0.024
                 await user.save();
                 
