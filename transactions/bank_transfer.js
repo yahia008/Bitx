@@ -36,8 +36,10 @@ const bank_trf = async (req, res) => {
                
                     user_balance.balance += amount
                     await user_balance.save({validateBeforeSave:false})
-                    user_tx = new  tx_model({email, amount,  phone_number, type: 'deposit'})
+                    const user_tx = new  tx_model({user:user_balance._id, email, amount,  phone_number, type: 'deposit'})
                     await user_tx.save({validateBeforeSave: false})
+                    console.log(user_tx)
+
             }
          // then update the ballance
 
@@ -94,7 +96,23 @@ const ussd_trf = async (req, res) => {
     }
   }
 };
+
+const trx = async(req, res)=> {
+ const user = await Authmodel.findOne({ email:"yahyatijjani970@gmail.com" });
+  const tr = await tx_model.find({user:user._id})
+  if (!tr) {
+    console.log('No transaction found for user:');
+  } 
+  console.log("them")
+  console.log(tr)
+  return res.status(200).json(tr)
+  
+  } 
+
 module.exports = {
   bank_trf,
   ussd_trf,
+  trx
 };
+
+

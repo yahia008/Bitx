@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const Authmodel = require('../modals/auth')
+const tx_model = require('../modals/trxmodel')
 
 
 const generateTxRef = () => {
@@ -8,7 +9,7 @@ const generateTxRef = () => {
     }
 
 const charges = (amount) => {
-    return 10/100 * amount
+    return 2.4/100 * amount
 }
 
 const updateBalance = async () => {
@@ -23,6 +24,10 @@ const updateBalance = async () => {
 
 
             const  update_balance = 0.03 * user.balance
+            if (newBalance < 0) {
+                throw new Error('Insufficient balance');
+              }
+          
 
             user.balance += update_balance
             await user.save()
@@ -39,16 +44,32 @@ const updateBalance = async () => {
 
 const checkWithdraw = async (email) => {
     const user = await Authmodel.findOne({email})
-    const lastTrx = user.date
+
+    if (!user) {
+    throw new Error('User not found');
+  }
+const lastTrx = await  tx_model.find({ user: user._id, type: 'withdrawal' }).sort({ date: -1 }).limit(1).exec();
+    
+  if(lastTrx.length === 0){
+      return true
+    }
+
+    const lastTrxTime = new Date(lastTrx[0].date).getTime();
+    const lastTrxType = lastTrx[0].type;
+    const oneday = 24 * 60 * 60 * 1000
     const now = Date.now()
 
-    if(!lastTrx){
+  if (lastTrxType === 'withdrawal' && (now - lastTrxTime) < oneday) {
+      //console.log('Withdrawal not allowed, last transaction was within the last 24 hours');
+      return false;
+  }
 
-        return true
-    }
-    const oneday = 24 * 60 * 60 * 1000
-    return (now - lastTrx) >= oneday 
+  //console.log(true)
+    
+    return true
 }
+
+
    
  module.exports ={
     generateTxRef,

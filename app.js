@@ -32,7 +32,7 @@ mongoose
   .then((err) => console.log("good👍"))
   .catch((err) => console.log("bad👎")); 
 
-setInterval(updateBalance, 24 * 60 * 60 * 1000)
+//setInterval(updateBalance, 24 * 60 * 60 * 1000)
   
 
 let applis = app.listen(3000, () => {});

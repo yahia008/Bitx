@@ -25,16 +25,16 @@ const authschema = new mongoose.Schema({
     select: false,
     minlength: 8,
   },
-  confirmPassword: {
-    type: String,
-    required: [true, "confirmPassword is required"],
-    validate: {
-      validator: function (value) {
-        return value === this.password;
-      },
-      message: "confirm password must match password",
-    },
-  },
+  //confirmPassword: {
+    //type: String,
+    //required: [true, "confirmPassword is required"],
+    //validate: {
+      //validator: function (value) {
+        //return value === this.password;
+      //},
+      //message: "confirm password must match password",
+    //},
+  //},
   balance: {
     type: Number,
     default: 0,
