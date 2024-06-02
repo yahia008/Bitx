@@ -35,7 +35,7 @@ const updateBalance = async () => {
         }
      
         
-        console.log('User balances updated successfully.')
+        //console.log('User balances updated successfully.')
 
     }catch(error){
         console.error('Error updating user balances:', error);

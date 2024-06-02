@@ -51,11 +51,8 @@ const withdrawal = async(req, res) => {
 
             }else{
                 res.status(400).json({message:'Withdrawal not allowed, last transaction was within the last 24 hours'})
-            }
-
-            
-        
-    }catch(error){
+         }
+ }catch(error){
         console.error(error);
     return res.status(500).json({ message: 'Internal server error' });
     }
