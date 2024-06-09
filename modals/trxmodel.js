@@ -9,6 +9,9 @@ const transactionSchema = new Schema({
   bank_name:{type:String},
   account_number:{type:String},
   phone_number:{type:String},
+  status: { type: String, default: 'pending' },
+  verified: { type: Boolean, default: false },
+  account_name:{type:String}
   
   
   

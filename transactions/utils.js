@@ -58,6 +58,12 @@ const lastTrx = await  tx_model.find({ user: user._id, type: 'withdrawal' }).sor
     const lastTrxType = lastTrx[0].type;
     const oneday = 24 * 60 * 60 * 1000
     const now = Date.now()
+    
+console.log('oneday:', oneday);
+console.log('now:', now);
+console.log('lastTrxTime:', lastTrxTime);
+console.log('Time difference:', now - lastTrxTime);
+
 
   if (lastTrxType === 'withdrawal' && (now - lastTrxTime) < oneday) {
       //console.log('Withdrawal not allowed, last transaction was within the last 24 hours');

@@ -1,4 +1,5 @@
 const express = require("express");
+const {admin_reg} = require("../controllers/admin")
 const {
   signup,
   login,
@@ -13,6 +14,7 @@ const {
 } = require("../controllers/authController");
 
 const authroute = express.Router();
+authroute.route("/admin").post(admin_reg);
 authroute.route("/signup").post(signup);
 authroute.route("/login").post(login);
 authroute.route("/forgotingpassword").post(forgotingpassword);

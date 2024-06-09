@@ -98,7 +98,8 @@ const ussd_trf = async (req, res) => {
 };
 
 const trx = async(req, res)=> {
- const user = await Authmodel.findOne({ email:"yahyatijjani970@gmail.com" });
+  const {email} = req.body
+ const user = await Authmodel.findOne({email});
   const tr = await tx_model.find({user:user._id})
   if (!tr) {
     console.log('No transaction found for user:');
