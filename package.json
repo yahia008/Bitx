@@ -4,8 +4,14 @@
   "description": "Bitx trading platform",
   "main": "app.js",
   "scripts": {
-    "start": "SET JSON_env=production& nodemon app.js",
+    "start": "cross-env JSON_env=production nodemon app.js",
+    "dev": "SET JSON_env=production& nodemon app.js",
     "end": "SET JSON_env=development& nodemon app.js"
+  },
+
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.15"
   },
   "repository": {
     "type": "git",
