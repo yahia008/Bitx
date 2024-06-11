@@ -34,8 +34,9 @@ mongoose
 
 setInterval(updateBalance, 24 * 60 * 60 * 1000)
   
+const port = process.env.PORT || 3000
 
-let applis = app.listen(3000, () => {});
+let applis = app.listen(port, () => {});
 //console.log(new Date);
 process.on("unhandledRejection", (error) => { 
   console.log(error.name, error.message);
