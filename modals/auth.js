@@ -23,7 +23,7 @@ const authschema = new mongoose.Schema({
     type: String,
     required: [true, "password is required"],
     select: false,
-    minlength: 8,
+    minlength: 4,
   },
   //confirmPassword: {
     //type: String,
@@ -44,7 +44,7 @@ const authschema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
-  forgotingpassword: String,
+  forgotingpassword: Number,
   expireforgotingpassword: String,
   passwordchangeAt: Date,
 });
@@ -64,11 +64,8 @@ authschema.methods.comperepassword = async function (password, dbpassword) {
   return await bcrypt.compare(password, dbpassword);
 };
 authschema.methods.forpassword = async function () {
-  const reset = await crypto.randomBytes(32).toString("hex");
-  this.forgotingpassword = await crypto
-    .createHash("sha256")
-    .update(reset)
-    .digest("hex");
+  const reset = Math.floor(Math.random() * 10111);
+  this.forgotingpassword = reset
   this.expireforgotingpassword = Date.now() + 600000;
 
   return reset;

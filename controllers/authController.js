@@ -107,8 +107,8 @@ exports.forgotingpassword = asynchandle(async (req, res, next) => {
   }
   const token = await finduser.forpassword();
   await finduser.save({ validateBeforeSave: false });
-  let message = `click here to reset  your password \n \n
-${req.protocol}://${req.get("host")}/auth/resetpassword/${token} `;
+  let message = `this is your reset password token \n \n
+${token}`;
 
   try {
     await sendmails({
@@ -130,25 +130,22 @@ ${req.protocol}://${req.get("host")}/auth/resetpassword/${token} `;
 });
 
 exports.resetpassword = asynchandle(async (req, res, next) => {
-  const hash = await crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+
   const create = await auth.findOne({
-    // forgotingpassword: hash,
+    forgotingpassword: req.body.token,
     expireforgotingpassword: { $gt: Date.now() },
   });
-  console.log(hash);
+  
   if (!create) {
     return next(new errorclass("token has expire"));
   }
   create.forgotingpassword = undefined;
   create.expireforgotingpassword = undefined;
   create.password = req.body.password;
-  create.confirmPassword = req.body.confirmPassword;
   create.passwordchangeAt = Date.now();
   await create.save({ validateBeforeSave: false });
-  duplicate(res, 201, create);
+  res.send("password change successful")
+  //duplicate(res, 201, create);
 });
 exports.authorize = asynchandle(async (req, res, next) => {
   const authorize = req.cookies.token;
