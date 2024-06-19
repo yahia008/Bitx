@@ -5,6 +5,7 @@ process.on("uncaughtException", (error) => {
 });
 
 const express = require("express");
+const cors = require("cors");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
 const cp = require("cookie-parser");
@@ -15,9 +16,15 @@ const authroute = require("./routers/authroute");
 const tx_route = require("./routers/tx_route");
 const { updateBalance } = require("./transactions/utils");
 
-dotenv.config({ path: "./BitX.env" });
+dotenv.config({ path: "./BitX.env" }); 
 const app = express();
 app.use(express.json());
+const corsOPtion = {
+  origin: '',
+  methods: ["GET", "PATCH", "POST", 'DELETE'],
+  allowedHeaders:["content-Type","Autuorization"]
+}
+app.use(cors(corsOPtion))
 app.use(cp());
 app.use("/auth", authroute);
 app.use("/transaction", tx_route);
