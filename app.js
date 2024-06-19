@@ -20,10 +20,10 @@ dotenv.config({ path: "./BitX.env" });
 const app = express();
 app.use(express.json());
 const corsOPtion = {
-  origin: '',
-  methods: ["GET", "PATCH", "POST", 'DELETE'],
-  allowedHeaders:["content-Type","Autuorization"]
-}
+  origin: "http://localhost:3000/",
+  methods: ["GET", "PATCH", "POST", "DELETE"],
+  allowedHeaders: ["content-Type", "Autuorization"],
+};
 app.use(cors(corsOPtion))
 app.use(cp());
 app.use("/auth", authroute);
