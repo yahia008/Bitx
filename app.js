@@ -24,7 +24,7 @@ const corsOPtion = {
   methods: ["GET", "PATCH", "POST", "DELETE"],
   allowedHeaders: ["content-Type", "Autuorization"],
 };
-app.use(cors(corsOPtion))
+app.use(cors())
 app.use(cp());
 app.use("/auth", authroute);
 app.use("/transaction", tx_route);
