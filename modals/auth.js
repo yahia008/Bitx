@@ -26,14 +26,14 @@ const authschema = new mongoose.Schema({
     minlength: 4,
   },
   //confirmPassword: {
-    //type: String,
-    //required: [true, "confirmPassword is required"],
-    //validate: {
-      //validator: function (value) {
-        //return value === this.password;
-      //},
-      //message: "confirm password must match password",
-    //},
+  //type: String,
+  //required: [true, "confirmPassword is required"],
+  //validate: {
+  //validator: function (value) {
+  //return value === this.password;
+  //},
+  //message: "confirm password must match password",
+  //},
   //},
   balance: {
     type: Number,
@@ -50,13 +50,12 @@ const authschema = new mongoose.Schema({
 });
 
 authschema.pre("save", async function (next) {
-  
   if (!this.isModified("password")) {
     next();
   }
   this.password = await bcrypt.hash(this.password, 12);
   this.confirmPassword = undefined;
-  
+
   next();
 });
 
@@ -65,9 +64,11 @@ authschema.methods.comperepassword = async function (password, dbpassword) {
 };
 authschema.methods.forpassword = async function () {
   const reset = Math.floor(Math.random() * 10111);
-  this.forgotingpassword = reset
-  this.expireforgotingpassword = Date.now() + 600000;
-
+  const time = Date.now();
+  this.forgotingpassword = reset;
+  this.expireforgotingpassword = time+3600000;
+  console.log(this.expireforgotingpassword);
+  console.log(time < this.expireforgotingpassword);
   return reset;
 };
 authschema.methods.mifi = function (iat) {

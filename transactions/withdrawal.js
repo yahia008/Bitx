@@ -38,6 +38,7 @@ const withdrawal = async (req, res) => {
         account_number,
         type: "withdrawal",
         account_name,
+        type: "withdrawal",
       });
       await user_tx.save();
 

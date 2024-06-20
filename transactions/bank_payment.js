@@ -30,8 +30,8 @@ const bank_payment = async (req, res) => {
                   bank_name,
                   transactionId: user_tx._id,
                   account_name,
-                }
-                ),
+                  type: "deposit",
+                }),
               });
 
                 res.status(200).json(user_tx)
