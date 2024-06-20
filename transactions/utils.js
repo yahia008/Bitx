@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const Authmodel = require('../modals/auth')
 const tx_model = require('../modals/trxmodel')
-const env = require('./')
+
 
 
 
