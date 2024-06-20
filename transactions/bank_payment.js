@@ -1,6 +1,7 @@
 const Authmodel = require('../modals/auth')
 const tx_model = require('../modals/trxmodel')
 const Admin = require("../modals/admin")
+const sendmails = require("../email/email");
 const {generateTxRef} = require('./utils');
 
 const bank_payment = async (req, res) => {
@@ -18,10 +19,29 @@ const bank_payment = async (req, res) => {
         }
         
         const user_tx = new tx_model({user:user._id, type:'deposit', bank_name, account_name, amount, phone_number})
-        await user_tx.save()
-      res.status(200).json(user_tx)
+      await user_tx.save()
+            try {
+              await sendmails({
+                email: "yahyatijjani99@gmail.com",
+                subject: "withdrawal",
+                message: JSON.stringify({
+                  id: user._id,
+                  amount,
+                  bank_name,
+                  transactionId: user_tx._id,
+                  account_name,
+                  type: "deposit",
+                }),
+              });
+
+                res.status(200).json(user_tx)
+              //
+            } catch (error) {
+              return res.send("something went wrong");
+            }
          
-    }catch(error) {
+    } catch (error) {
+      console.log(error.message);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 
