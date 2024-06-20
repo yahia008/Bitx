@@ -67,8 +67,6 @@ authschema.methods.forpassword = async function () {
   const time = Date.now();
   this.forgotingpassword = reset;
   this.expireforgotingpassword = time+3600000;
-  console.log(this.expireforgotingpassword);
-  console.log(time < this.expireforgotingpassword);
   return reset;
 };
 authschema.methods.mifi = function (iat) {

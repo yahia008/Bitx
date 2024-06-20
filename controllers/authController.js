@@ -130,12 +130,11 @@ ${token}`;
 });
 
 exports.resetpassword = asynchandle(async (req, res, next) => {
-
   const create = await auth.findOne({
     forgotingpassword: req.body.token,
- // expireforgotingpassword: { $lt: toString(Date.now()) },
+    // expireforgotingpassword: { $lt: toString(Date.now()) },
   });
-  
+
   if (!create) {
     return next(new errorclass("token has expire"));
   }
@@ -144,7 +143,7 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
   create.password = req.body.password;
   create.passwordchangeAt = Date.now();
   await create.save({ validateBeforeSave: false });
-  res.send("password change successful")
+  res.send("password change successful");
   //duplicate(res, 201, create);
 });
 exports.authorize = asynchandle(async (req, res, next) => {

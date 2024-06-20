@@ -18,8 +18,8 @@ authroute.route("/admin").post(admin_reg);
 authroute.route("/signup").post(signup);
 authroute.route("/login").post(login);
 authroute.route("/forgotingpassword").post(forgotingpassword);
-authroute.route("/resetpassword/").patch(resetpassword);
-authroute.route("/changepassword").patch(authorize, changepassword);
+authroute.route("/resetpassword/").post(resetpassword);
+authroute.route("/changepassword").post(authorize, changepassword);
 authroute.route("/getall").get(authorize, role("admin"), getalluser);
 authroute
   .route("/getalluser/:id")
