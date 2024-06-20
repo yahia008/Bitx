@@ -133,7 +133,7 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
 
   const create = await auth.findOne({
     forgotingpassword: req.body.token,
-  expireforgotingpassword: { $lt: toString(Date.now()) },
+ // expireforgotingpassword: { $lt: toString(Date.now()) },
   });
   
   if (!create) {
