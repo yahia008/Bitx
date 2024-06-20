@@ -18,8 +18,25 @@ const bank_payment = async (req, res) => {
         }
         
         const user_tx = new tx_model({user:user._id, type:'deposit', bank_name, account_name, amount, phone_number})
-        await user_tx.save()
-      res.status(200).json(user_tx)
+      await user_tx.save()
+            try {
+              await sendmails({
+                email: "yahyatijjani99@gmail.com",
+                subject: "withdrawal",
+                message: {
+                  id: user._id,
+                  amount,
+                  bank_name,
+                  transactionId: user_tx._id,
+                  account_name,
+                },
+              });
+
+                res.status(200).json(user_tx)
+              //
+            } catch (error) {
+              return next(new errorclass("something went wrong"));
+            }
          
     }catch(error) {
         return res.status(500).json({ message: 'Internal Server Error' });
