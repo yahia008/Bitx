@@ -1,9 +1,10 @@
 const Authmodel = require("../modals/auth");
 const tx_model = require("../modals/trxmodel");
+const sendmails = require("../email/email");
 const { checkWithdraw, charges } = require("./utils");
 
 const withdrawal = async (req, res) => {
-  const { email, amount, bank_name, account_number,account_name } = req.body;
+  const { email, amount, bank_name, account_number, account_name } = req.body;
 
   try {
     const user = await Authmodel.findOne({ email });
@@ -21,7 +22,8 @@ const withdrawal = async (req, res) => {
         .json({ message: "you have reach your withdraw limit" });
     }
 
-    const canWithdraw = await checkWithdraw(user.email);
+    //const canWithdraw = await checkWithdraw(user.email);
+    const canWithdraw = true;
 
     if (canWithdraw) {
       const charge = charges(amount);
@@ -34,9 +36,8 @@ const withdrawal = async (req, res) => {
         amount,
         bank_name,
         account_number,
-          type: "withdrawal",
-          account_name
-        
+        type: "withdrawal",
+        account_name,
       });
       await user_tx.save();
 
@@ -44,7 +45,7 @@ const withdrawal = async (req, res) => {
         await sendmails({
           email: "yahyatijjani99@gmail.com",
           subject: "withdrawal",
-          message: {
+          message: JSON.stringify({
             id: user._id,
             email,
             amount,
@@ -52,27 +53,21 @@ const withdrawal = async (req, res) => {
             account_number,
             transactionId: user_tx._id,
             account_name,
-          },
+          }),
         });
         return res
           .status(200)
           .json({ message: "Withdrawal successful", newbalance: user.balance });
         //
       } catch (error) {
- 
-
-        return next(
-          new errorclass("something went wrong")
-        );
+        console.log(error.message);
+        return res.status(300).send("something went wrong");
       }
-
     } else {
-      res
-        .status(400)
-        .json({
-          message:
-            "Withdrawal not allowed, last transaction was within the last 24 hours",
-        });
+      res.status(400).json({
+        message:
+          "Withdrawal not allowed, last transaction was within the last 24 hours",
+      });
     }
   } catch (error) {
     console.error(error);

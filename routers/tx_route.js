@@ -1,5 +1,8 @@
 const express = require("express");
-const {bank_payment, verifyPaymentAndUpdateBalance } = require('../transactions/bank_payment')
+const {
+  bank_payment,
+  verifyPaymentAndUpdateBalance,
+} = require("../transactions/bank_payment");
 //const { bank_trf, ussd_trf, trx } = require("../transactions/bank_transfer");
 const { withdrawal } = require("../transactions/withdrawal");
 
