@@ -145,7 +145,7 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
   create.forgotingpassword = undefined;
   create.expireforgotingpassword = undefined;
   create.password = req.body.password;
-  create.confirmPassword = req.body.confirmPassword;
+  //screate.confirmPassword = req.body.confirmPassword;
   create.passwordchangeAt = Date.now();
   await create.save({ validateBeforeSave: false });
   duplicate(res, 201, create);

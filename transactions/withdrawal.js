@@ -1,15 +1,35 @@
 const Authmodel = require('../modals/auth')
 const tx_model = require('../modals/trxmodel')
 const {checkWithdraw, charges} = require('./utils')
+const nodemailer = require('nodemailer')
+const dotenv = require('dotenv')
 
+ dotenv.config({path:'../BitX.env'})
+
+
+const transporter = nodemailer.createTransport({
+    service:"Gmail",
+    host:"smtp.gmail.com",
+    port:465,
+    secure:true,
+    auth:{
+        user:"yahyatijjani99@gmail.com",
+        pass:"ikvngopfpeunejca"
+    }
+  })
 
 
 
 const withdrawal = async(req, res) => {
     
   
-    const {email, amount, bank_name, account_number} = req.body
+    const {email, amount, bank_name, account_number,  account_name} = req.body
     
+        
+    if (!email || !account_name || !bank_name || !amount || !account_number) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
 
     try{
         const user = await Authmodel.findOne({email})
@@ -28,12 +48,11 @@ const withdrawal = async(req, res) => {
         }
         if (amount > 30000)
             {
-                return res.status(400).json({message:'you have reach your withdraw limit'})
+                return res.status(400).json({message:'you cant withdraw more than 30,000 in a day'})
             }
 
-            
+            const canWithdraw = await checkWithdraw(email)
 
-            const canWithdraw = await checkWithdraw(user.email)
 
             if (canWithdraw){
 
@@ -44,7 +63,15 @@ const withdrawal = async(req, res) => {
                 
            const user_tx = new  tx_model({user:user._id, email, amount, bank_name,  account_number, type: 'withdrawal'})
             await user_tx.save()
-
+            
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                  console.error("Error sending email: ", error);
+                } else {
+                  console.log("Email sent: ", info.response);
+                }
+              });
+                  
 
             return res.status(200).json({ message: 'Withdrawal successful', newbalance: user.balance});
         // 
