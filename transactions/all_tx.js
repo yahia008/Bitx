@@ -1,18 +1,17 @@
 const asynchandle = require("../errors/asynchandler");
 const Transaction = require("../modals/trxmodel");
 
-exports.getalltx = asynchandle(async (req, res, next) => {
-  console.log('inside')
-  let emm = req.user.id;
-  let user = await Transaction.find({ user: emm });
-  //user = user.sort("-date");
-  //const data = await user; 
-  console.log('last')
-  res.status(200).json({
-    message: "success",
-    user,
-  });
-});
+// exports.getalltx = asynchandle(async (req, res, next) => {
+//   let emm = req.user.id;
+//   let user = await Transaction.find({ user: emm });
+//   //user = user.sort("-date");
+//   //const data = await user;
+//   console.log('last')
+//   res.status(200).json({
+//     message: "success",
+//     user,
+//   });
+// });
 exports.gettx = asynchandle(async (req, res, next) => {
   const user = await Transaction.find({ _id: req.params.id });
   res.status(200).json({
@@ -20,3 +19,14 @@ exports.gettx = asynchandle(async (req, res, next) => {
     Transaction: user,
   });
 });
+
+
+exports.novex = async (req, res, next) => {
+  
+  const user = await Transaction.find({ user: req.user.id });
+  res.status(200).json({
+    message: "success",
+    user,
+  });
+}
+

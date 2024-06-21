@@ -22,7 +22,7 @@ authroute.route("/forgotingpassword").post(forgotingpassword);
 authroute.route("/resetpassword/").post(resetpassword);
 authroute.route("/changepassword").post(authorize, changepassword);
 authroute.route("/getall").get(authorize, role("admin"), getalluser);
-authroute.route("/getalltx").get(authorize, getalltx);
+
 authroute
   .route("/getalluser/:id")
   .get(authorize, role("admin"), getalluserbyid);

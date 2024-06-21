@@ -5,7 +5,7 @@ const {
 } = require("../transactions/bank_payment");
 //const { bank_trf, ussd_trf, trx } = require("../transactions/bank_transfer");
 const { withdrawal } = require("../transactions/withdrawal");
-const { getalltx, gettx } = require("../transactions/all_tx");
+const { getalltx, gettx, novex } = require("../transactions/all_tx");
 const { authorize } = require("../controllers/authController");
 
 const tx_route = express.Router();
@@ -13,6 +13,7 @@ tx_route.route("/bank_payment").post(bank_payment);
 tx_route.route("/verify").post(verifyPaymentAndUpdateBalance);
 
 tx_route.route("/gettx/:id").get(gettx);
+tx_route.route("/novex").get(authorize,novex);
 //tx_route.route("/bank_transfer").post(bank_trf);
 //tx_route.route("/ussd_transfer").post(ussd_trf);
 //tx_route.route("/trx").post(trx);
