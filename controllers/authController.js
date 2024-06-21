@@ -148,13 +148,14 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
 });
 exports.authorize = asynchandle(async (req, res, next) => {
   // const authorize = req.cookies.token;
+  console.log("authr");
   let head;
   let Authorization = req.headers.authorization;
 
   if (Authorization && Authorization.startsWith("Bearer")) {
     head = Authorization.split(" ")[1];
   }
-
+  console.log("middle");
   if (!head) {
     return next(new errorclass("please log in"));
   }
@@ -166,6 +167,7 @@ exports.authorize = asynchandle(async (req, res, next) => {
   if (await user.mifi(verify.iat)) {
     return next(new errorclass(" please log in again", 300));
   }
+  console.log("authr last");
   req.user = user;
   next();
 });
