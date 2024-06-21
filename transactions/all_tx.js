@@ -2,11 +2,11 @@ const asynchandle = require("../errors/asynchandler");
 const Transaction = require("../modals/trxmodel");
 
 exports.getalltx = asynchandle(async (req, res, next) => {
-  const user = Transaction.find({ user: req.user.id });
-  user = user.sort("date");
+  let user = Transaction.find({ user: req.user.id });
+  user = user.sort("-date");
   const data = await user; 
   res.status(200).json({
-    success: "success",
+    message: "success",
     data,
   });
 });

@@ -3,36 +3,37 @@ const errorclass = require("./errorclass");
 const dev = (error, res) => {
   res.status(error.status || 300).json({
     status: error.status,
-    error, 
+    error,
     stacktarce: error.stack,
   });
 };
 const prod = (error, res) => {
   if (error.isoperational) {
     res.status(error.status || 300).json({
-        status: error.status,
-        error: error.message,
-      });
-    } else {
-      res.status(error.status || 300).json({
-        status: error.status,
-        error: "something went wrong",
-      });
-    } 
-}; 
+      status: error.status,
+      error: error.message,
+    });
+  } else {
+    res.status(error.status || 300).json({
+      status: error.status,
+      error: "something went wrong",
+    });
+  }
+};
 const code = (error) => {
-  
   const msg = `${error.keyValue.name || error.keyValue.email} already exits`;
   return new errorclass(msg, 404);
 };
 const cast = (error) => {
-   const msg = `no user with the id found`;
+  const msg = `no user with the id found`;
   return new errorclass(msg, 404);
 };
 const duplicate = (error) => {
-  const greg=Object.values(error.errors).map(err=>err.message).join(',')
+  const greg = Object.values(error.errors)
+    .map((err) => err.message)
+    .join(",");
   const msg = `missing vaildations : ${greg}`;
-  return new errorclass(msg, 404)
+  return new errorclass(msg, 404);
 };
 
 module.exports = (error, req, res, next) => {
@@ -40,10 +41,10 @@ module.exports = (error, req, res, next) => {
     dev(error, res);
   }
 
-    if (process.env.JSON_env === "production") {
-      if (error.name === "CastError") error = cast(error);
-      if (error.code===11000) error=code(error)
-      if (error.name === "ValidationError") error = duplicate(error);
+  if (process.env.JSON_env === "production") {
+    if (error.name === "CastError") error = cast(error);
+    if (error.code === 11000) error = code(error);
+    if (error.name === "ValidationError") error = duplicate(error);
     prod(error, res);
   }
 };
