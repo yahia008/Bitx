@@ -12,18 +12,20 @@ const bank_payment = async (req, res) => {
     }
 
     try{
-       const user = await Authmodel.findOne({email})
+      const user = await Authmodel.findOne({ email })
+     // console.log(user.id);
        if(!user)
         {
             return res.status(404).json({ message: 'User not found' }); 
         }
         
-        const user_tx = new tx_model({user:user._id, type:'deposit', bank_name, account_name, amount, phone_number})
+      const user_tx = new tx_model({ user:user.id, type:'deposit', bank_name, account_name, amount, phone_number})
       await user_tx.save()
+      console.log(user_tx);
             try {
               await sendmails({
                 email: "yahyatijjani99@gmail.com",
-                subject: "withdrawal",
+                subject: 'deposit',
                 message: JSON.stringify({
                   id: user._id,
                   amount,
