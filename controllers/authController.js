@@ -147,7 +147,7 @@ exports.resetpassword = asynchandle(async (req, res, next) => {
   //duplicate(res, 201, create);
 });
 exports.authorize = asynchandle(async (req, res, next) => {
-  const authorize = req.cookies.token;
+  // const authorize = req.cookies.token;
   let head;
   let Authorization = req.headers.authorization;
 
@@ -155,13 +155,10 @@ exports.authorize = asynchandle(async (req, res, next) => {
     head = Authorization.split(" ")[1];
   }
 
-  if (!authorize && !head) {
+  if (!head) {
     return next(new errorclass("please log in"));
   }
-  const verify = await util.promisify(jwt.verify)(
-    authorize || head,
-    process.env.connect
-  );
+  const verify = await util.promisify(jwt.verify)(head, process.env.connect);
   const user = await auth.findById(verify._id);
   if (!user) {
     return next(new errorclass("log in again"));
