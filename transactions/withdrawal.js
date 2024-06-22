@@ -22,8 +22,7 @@ const withdrawal = async (req, res) => {
         .json({ message: "you have reach your withdraw limit" });
     }
 
-    //const canWithdraw = await checkWithdraw(user.email);
-    const canWithdraw = true;
+    const canWithdraw = await checkWithdraw(user.email);
 
     if (canWithdraw) {
       const charge = charges(amount);
