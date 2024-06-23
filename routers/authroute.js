@@ -29,6 +29,6 @@ authroute
 authroute.route("/changepassword").patch(authorize, changepassword);
 authroute.route("/getalluser").get(authorize, role("admin"), getalluser);
 authroute.route("/findbyemail").get(authorize, role("admin"), getuserbyemail);
-authroute.route("/getuser/:id").get(authorize, role("admin"), getalluserbyid);
+authroute.route("/getuser/:id").get( getalluserbyid);
 
 module.exports = authroute;
