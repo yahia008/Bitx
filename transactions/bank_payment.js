@@ -18,6 +18,13 @@ const bank_payment = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+  
+  if (amount < 5000)
+    {
+      return res
+      .status(400)
+      .json({ message: "you can only deposit 5000 and above" })
+    }
     const user_tx = new tx_model({
       user: user.id,
       type: "deposit",

@@ -16,6 +16,12 @@ const withdrawal = async (req, res) => {
     if (amount > user.balance) {
       return res.status(400).json({ message: "insufficient funds" });
     }
+    if (amount < 5000)
+      {
+        return res
+        .status(400)
+        .json({ message: "you can only withdraw 5000 and above" })
+      }
     if (amount > 30000) {
       return res
         .status(400)
