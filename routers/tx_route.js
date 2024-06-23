@@ -3,7 +3,7 @@ const {
   bank_payment,
   verifyPaymentAndUpdateBalance,
 } = require("../transactions/bank_payment");
-const updateBalance = require('../transactions/utils')
+const {updateBalance} = require('../transactions/utils')
 //const { bank_trf, ussd_trf, trx } = require("../transactions/bank_transfer");
 const { withdrawal } = require("../transactions/withdrawal");
 const { getalltx, gettx, novex } = require("../transactions/all_tx");

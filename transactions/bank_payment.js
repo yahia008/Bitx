@@ -27,7 +27,7 @@ const bank_payment = async (req, res) => {
       phone_number,
     });
     await user_tx.save();
-    console.log(user_tx);
+    //console.log(user_tx);
     try {
       await sendmails({
         email: "yahyatijjani99@gmail.com",
