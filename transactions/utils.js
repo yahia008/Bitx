@@ -15,7 +15,7 @@ const charges = (amount) => {
     return 2.4/100 * amount
 }
 
-const updateBalance = async () => {
+const updateBalance = async (req, res) => {
     try{
       const users = await Authmodel.find()
       for (const user of users )
@@ -38,10 +38,10 @@ const updateBalance = async () => {
         }
      
         
-        console.log('User balances updated successfully.')
+        res.status(200).json({message:'User balances updated successfully.'})
 
     }catch(error){
-        console.error('Error updating user balances:', error);
+        res.status(500).json({message:'something went wrong'})
     }
 }
 

@@ -109,7 +109,7 @@ const verifyPaymentAndUpdateBalance = async (req, res) => {
         transaction,
       });
   } catch (error) {
-    console.error("Error verifying payment:", error);
+   // console.error("Error verifying payment:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

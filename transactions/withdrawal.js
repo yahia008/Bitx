@@ -39,7 +39,7 @@ const withdrawal = async (req, res) => {
         account_name,
         type: "withdrawal",
       });
-      console.log(user_tx);
+      //console.log(user_tx);
       await user_tx.save();
 
       try {
