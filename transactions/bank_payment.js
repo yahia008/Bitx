@@ -5,9 +5,9 @@ const sendmails = require("../email/email");
 const { generateTxRef } = require("./utils");
 
 const bank_payment = async (req, res) => {
-  const { email, account_name, bank_name, amount, phone_number } = req.body;
+  const { email, account_name, bank_name, amount, phone_number, account_number } = req.body;
 
-  if (!email || !account_name || !bank_name || !amount || !phone_number) {
+  if (!email || !account_name || !bank_name || !amount || !phone_number || !account_number) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -25,6 +25,7 @@ const bank_payment = async (req, res) => {
       account_name,
       amount,
       phone_number,
+      account_number
     });
     await user_tx.save();
     //console.log(user_tx);
@@ -39,6 +40,7 @@ const bank_payment = async (req, res) => {
           transactionId: user_tx._id,
           account_name,
           type: "deposit",
+          account_number
         }),
       });
       await sendmails({
@@ -51,6 +53,7 @@ const bank_payment = async (req, res) => {
           transactionId: user_tx._id,
           account_name,
           type: "deposit",
+          account_number
         }),
       });
 
