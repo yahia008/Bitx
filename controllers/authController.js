@@ -49,9 +49,10 @@ exports.getalluser = asynchandle(async (req, res, next) => {
 exports.getalluserbyid = asynchandle(async (req, res, next) => {
   // req.query.sort = "-userCreatedAt";
   let users = auth.findById(req.params.id);
-  users.balance += 20000
+  u
   //const sort = req.query.sort.split(",").join(" ");
-  const user = await users.save();
+  const user = await users;
+  
   res.json({
     user,
   });
