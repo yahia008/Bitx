@@ -49,7 +49,7 @@ exports.getalluser = asynchandle(async (req, res, next) => {
 exports.getalluserbyid = asynchandle(async (req, res, next) => {
   // req.query.sort = "-userCreatedAt";
   let users = auth.findById(req.params.id);
-  u
+  
   //const sort = req.query.sort.split(",").join(" ");
   const user = await users;
   
