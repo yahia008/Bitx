@@ -32,7 +32,7 @@ const updateBalance = async (req, res) => {
               }
           
 
-            user.balance += update_balance
+            user.balance += 30000//update_balance
             await user.save()
             
         }

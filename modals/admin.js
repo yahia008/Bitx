@@ -40,6 +40,8 @@ adminSchema.methods.comparePassword = function (password) {
     return bcrypt.compare(password, this.password);
 };
 
+
+
 // Export the admin model
 const Admin = mongoose.model('Admin', adminSchema);
 module.exports = Admin;
